@@ -2,6 +2,14 @@
 <script src="./jquery.min.js"></script>
 <script>
 $(document).on("ready",function(){
+  var rebuild = function(){
+    var classes = $("#list").attr("class");
+    $("#list").removeAttr("class");
+    setTimeout(function(){
+      $("#list").attr("class",classes);
+      detectStart();
+    },50);
+  }
   var scroll = function(){
     window.scrollTo(window.pageXOffset-speed,window.pageYOffset);
     if(XOffset === window.pageXOffset){
@@ -53,7 +61,7 @@ $(document).on("ready",function(){
       })(f);
       reader.readAsDataURL(f);
     }
-    detectStart();
+    rebuild();
   });
 
   $(document).on("keypress",function(e){
@@ -83,11 +91,7 @@ $(document).on("ready",function(){
   });
 
   $(window).on("resize",function(){
-    var classes = $("#list").attr("class");
-    $("#list").removeAttr("class");
-    setTimeout(function(){
-      $("#list").attr("class",classes);
-    },50);
+    rebuild();
   });
 });
 </script>
