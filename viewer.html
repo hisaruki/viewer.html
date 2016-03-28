@@ -1,0 +1,156 @@
+<head>
+<script src="./jquery.min.js"></script>
+<script>
+$(document).on("ready",function(){
+  var scroll = function(){
+    window.scrollTo(window.pageXOffset-speed,window.pageYOffset);
+    if(XOffset === window.pageXOffset){
+      window.scrollTo(XStart,window.pageYOffset);
+    }
+    XOffset = window.pageXOffset;
+    window.scrollTo(window.pageXOffset,window.pageYOffset+speed);
+    if(YOffset === window.pageYOffset){
+      window.scrollTo(window.pageXOffset,YStart);
+    }
+    YOffset = window.pageYOffset;
+  }
+  setInterval(function(){
+    if(autoscroll > 0){
+      scroll();
+    }
+  },1);
+  var detectStart = function(){
+    if(speed > 0){
+      XStart = $(document).outerWidth() - $(window).width();
+      YStart = 0;
+    }
+    if(speed < 0){
+      XStart = 0;
+      YStart = $(document).outerHeight() - window.screen.availHeight;
+    }
+  }
+
+  var autoscroll = -1;
+  var speed = 1;
+  var XOffset = window.pageXOffset;
+  var YOffset = window.pageYOffset;
+  var XStart = $(document).outerWidth() - $(window).width();
+  var YStart = 0;
+
+  $("#dir").on("change",function(e){
+    $("#list").empty();
+    var files = e.target.files;
+    for(i=0;i<files.length;i++){
+      var f = files[i];
+      if (!f.type.match('image.*')) {
+        continue;
+      }
+      var reader = new FileReader();
+      reader.onload = (function(theFile) {
+        return function(e) {
+          $("#list").append('<div class="item"><img src="'+e.target.result+'"></div>')
+        };
+      })(f);
+      reader.readAsDataURL(f);
+    }
+    detectStart();
+  });
+
+  $(document).on("keypress",function(e){
+    //space
+    if(e.which == 32){
+      autoscroll *= -1;
+    }
+    //r
+    if(e.which == 114){
+      speed *= -1;
+    }
+    //h
+    if(e.which == 104){
+      $("#list").attr("class","horizonal");
+      
+    }
+    //v
+    if(e.which == 118){
+      $("#list").attr("class","vertical");
+    }
+
+    //m
+    if(e.which == 109){
+      $("#list").toggleClass("spread");
+    }
+    detectStart();
+  });
+
+  $(window).on("resize",function(){
+    var classes = $("#list").attr("class");
+    $("#list").removeAttr("class");
+    setTimeout(function(){
+      $("#list").attr("class",classes);
+    },50);
+  });
+});
+</script>
+<style>
+* {
+  margin:0;
+  padding:0;
+}
+body {
+  overflow:hidden;
+  background:#cccccc;
+}
+#menu {
+  background:rgba(255,255,255,0.5);
+  text-align:right;
+  width:100%;
+  position:fixed;
+  bottom:0;
+  right:0;
+  opacity:0;
+}
+#menu:hover {
+  opacity:1;
+}
+
+
+#list.vertical {
+  width:100%;
+  display:inline-flex;
+  flex-direction:row;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+#list.horizonal {
+  display:inline-flex;
+  flex-direction:row-reverse;
+  flex-wrap:no-wrap;
+}
+
+#list > .item {
+  width:100%;
+}
+
+#list.vertical.spread > .item {
+  width:50%;
+}
+
+.horizonal img {
+  height:100%;
+}
+
+.vertical img {
+  width:100%;
+}
+
+
+</style>
+</head>
+<body>
+<section id="menu">
+  <input id="dir" type="file" directory webkitdirectory>
+</section>
+<section id="list" class="vertical spread">
+</section>
+</body>
