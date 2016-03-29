@@ -35,16 +35,17 @@ $(document).on("ready",function(){
   }
 
   var autoscroll = -1;
-  var speed = 1;
+  var speed = 5;
   var XOffset = window.pageXOffset;
   var YOffset = window.pageYOffset;
   var XStart = $(document).outerWidth() - $(window).width();
   var YStart = 0;
+  var scrollSpeed = 16;
   setInterval(function(){
     if(autoscroll > 0){
       scroll();
     }
-  },1);
+  },scrollSpeed);
 
   $("#dir").on("change",function(e){
     if(e.target.files.length){
@@ -117,6 +118,16 @@ $(document).on("ready",function(){
     if(e.which == 109){
       $("#list").toggleClass("spread");
     }
+
+    //plus
+    if(e.which == 43){
+      speed = Math.abs(speed+1)*(speed/Math.abs(speed)) || 1;
+    }
+    //substruct
+    if(e.which == 45){
+      speed = Math.abs(speed-1)*(speed/Math.abs(speed)) || 1;
+    }
+
     detectStart();
   });
 
