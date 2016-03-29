@@ -34,6 +34,81 @@ $(document).on("ready",function(){
     }
   }
 
+  var move = function(command){
+    var offsets = [];
+    if($(".horizonal").length){
+      var now = window.pageXOffset
+      var target = "left";
+    }
+    if($(".vertical").length){
+      var now = window.pageYOffset
+      var target = "top";
+    }
+
+    $(".item").each(function(){
+      offsets.push($(this).offset()[target])
+    })
+    if($(".vertical.spread").length){
+      var orgOffset = window.pageYOffset;
+      var spreads = [];
+      for(i=0;i<offsets.length;i+=2){
+        spreads.push(Math.min(offsets[i],offsets[i+1])||offsets[i]);
+        spreads.push(Math.min(offsets[i],offsets[i+1])||offsets[i]);
+      } 
+      offsets = spreads;
+    }
+
+    var diff = offsets.map(function(n) { return Math.abs(now - n) });
+    var index = diff.lastIndexOf(Math.min.apply([], diff));
+
+    var moveTo = command;
+    if(command === true){
+      moveTo = index+1;
+    }
+    if(command === false){
+      moveTo = index-1;
+      if(offsets[moveTo] == offsets[moveTo+1]){
+        moveTo--;
+      }
+    }
+
+    if(moveTo < 0){
+      moveTo = offsets.length - 1;
+    }
+
+    if(target == "left" && offsets[moveTo] > $(document).width() - $(window).width()){
+      moveTo = offsets.length - 1;
+    }
+
+    if(offsets[moveTo] === undefined){
+      moveTo = 0;
+    }
+
+    var autoscrollLocal = autoscroll;
+    if(target == "top"){
+      autoscroll = -1;
+      $("html,body").animate({scrollTop:offsets[moveTo]},function(){
+        autoscroll = autoscrollLocal;
+        if(window.pageYOffset == orgOffset){
+          autoscroll = -1;
+          $("html,body").animate({scrollTop:0},function(){
+            autoscroll = autoscrollLocal;
+          });
+        }
+      });
+    }
+    if(target == "left"){
+      autoscroll = -1;
+      $("html,body").animate({scrollLeft:offsets[moveTo]},function(){
+        autoscroll = autoscrollLocal;
+      });
+    }
+
+
+
+
+  }
+
   var autoscroll = -1;
   var speed = 5;
   var XOffset = window.pageXOffset;
@@ -65,6 +140,7 @@ $(document).on("ready",function(){
 
       files.sort(compare);
       var loading = false;
+      var num = 0;
       var me = setInterval(function(){
         if(!loading){
           loading = true;
@@ -72,9 +148,9 @@ $(document).on("ready",function(){
           if(f.type.match('image.*')){
             var reader = new FileReader();
             reader.onload = (function(theFile) {
-              console.log(theFile);
               return function(e) {
-                $("#list").append('<div class="item"><img src="'+e.target.result+'"></div>')
+                $("#list").append('<div name="'+num+'" class="item"><img src="'+e.target.result+'"></div>')
+                num++;
                 loading = false;
                 if(!files.length){
                   clearInterval(me);
@@ -116,7 +192,7 @@ $(document).on("ready",function(){
 
     //m
     if(e.which == 109){
-      $("#list").toggleClass("spread");
+      $("#list").attr("class","vertical spread");
     }
 
     //plus
@@ -127,6 +203,17 @@ $(document).on("ready",function(){
     if(e.which == 45){
       speed = Math.abs(speed-1)*(speed/Math.abs(speed)) || 1;
     }
+
+
+    //j
+    if(e.which == 106){
+      move(true)
+    }
+    //k
+    if(e.which == 107){
+      move(false)
+    }
+
 
     detectStart();
   });
