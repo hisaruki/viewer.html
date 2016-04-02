@@ -145,11 +145,16 @@ $(document).on("ready",function(){
         if(!loading){
           loading = true;
           var f = files.shift();
-          if(f.type.match('image.*')){
+          if(f.type.match('image.*') || f.type.match('video.*')){
             var reader = new FileReader();
             reader.onload = (function(theFile) {
               return function(e) {
-                $("#list").append('<div name="'+num+'" class="item"><img src="'+e.target.result+'"></div>')
+                if(f.type.match('image.*')){
+                  $("#list").append('<div name="'+num+'" class="item"><img src="'+e.target.result+'"></div>')
+                }
+                if(f.type.match('video.*')){
+                  $("#list").append('<div name="'+num+'" class="item"><video autoplay loop src="'+e.target.result+'"></div>')
+                }
                 num++;
                 loading = false;
                 if(!files.length){
@@ -268,11 +273,11 @@ body {
   width:50%;
 }
 
-.horizonal img {
+.horizonal img, .horizonal video {
   height:100%;
 }
 
-.vertical img {
+.vertical img, .vertical video {
   width:100%;
 }
 
