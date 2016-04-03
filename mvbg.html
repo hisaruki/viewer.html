@@ -174,13 +174,14 @@ $(document).on("ready",function(){
 
     //plus
     if(e.which == 43){
-      speed = Math.abs(speed+1)*(speed/Math.abs(speed)) || 1;
+      var porm = speed/Math.abs(speed)
+      speed = Math.abs(speed+(1*porm))*porm || 1*porm;
     }
     //substruct
     if(e.which == 45){
-      speed = Math.abs(speed-1)*(speed/Math.abs(speed)) || 1;
+      var porm = speed/Math.abs(speed)
+      speed = Math.abs(speed-(1*porm))*porm || 1*porm;
     }
-
     //j
     if(e.which == 106){
       move(true)
