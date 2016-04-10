@@ -126,9 +126,17 @@ $(document).on("ready",function(){
     if(e.target.files.length){
       $("#list").empty();
       function compare(a,b) {
-        if (a.name < b.name)
+
+        a.path = a.name;
+        b.path = b.name;
+        if(a.webkitRelativePath && b.webkitRelativePath){
+          a.path = a.webkitRelativePath;
+          b.path = b.webkitRelativePath;
+        }
+
+        if (a.path < b.path)
           return -1;
-        else if (a.name > b.name)
+        else if (a.path > b.path)
           return 1;
         else 
           return 0;
