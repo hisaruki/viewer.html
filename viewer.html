@@ -185,6 +185,12 @@ $(document).on("ready",function(){
   });
 
   $(document).on("keypress",function(e){
+
+    //num
+    if(49 <= e.which && e.which <= 57){
+      speed = (speed/Math.abs(speed))*(e.which - 48);
+    }
+
     //space
     if(e.which == 32){
       autoscroll *= -1;

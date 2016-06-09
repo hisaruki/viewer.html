@@ -61,6 +61,8 @@ $(document).on("ready",function(){
     var diff = offsets.map(function(n) { return Math.abs(now - n) });
     var index = diff.lastIndexOf(Math.min.apply([], diff));
 
+
+
     var moveTo = command;
     if(command === true){
       moveTo = index+1;
@@ -83,11 +85,21 @@ $(document).on("ready",function(){
     if(offsets[moveTo] === undefined){
       moveTo = 0;
     }
+    moveTo = offsets[moveTo];
+
+    if(typeof command === 'object'){
+      if(target == "top"){
+        moveTo = window.pageYOffset + command[0];
+      }
+      if(target == "left"){
+        moveTo = window.pageXOffset + command[0];
+      }
+    }
 
     var autoscrollLocal = autoscroll;
     if(target == "top"){
       autoscroll = -1;
-      $("html,body").animate({scrollTop:offsets[moveTo]},function(){
+      $("html,body").animate({scrollTop:moveTo},function(){
         autoscroll = autoscrollLocal;
         if(window.pageYOffset == orgOffset){
           autoscroll = -1;
@@ -99,7 +111,7 @@ $(document).on("ready",function(){
     }
     if(target == "left"){
       autoscroll = -1;
-      $("html,body").animate({scrollLeft:offsets[moveTo]},function(){
+      $("html,body").animate({scrollLeft:moveTo},function(){
         autoscroll = autoscrollLocal;
       });
     }
@@ -189,6 +201,15 @@ $(document).on("ready",function(){
     //k
     if(e.which == 107){
       move(false)
+    }
+
+    //h
+    if(e.which == 104){
+      move([-100*speed]);
+    }
+    //l
+    if(e.which == 108){
+      move([100*speed]);
     }
 
     detectStart();
