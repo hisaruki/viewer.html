@@ -184,6 +184,11 @@ $(document).on("ready",function(){
       speed *= -1;
     }
 
+    //num
+    if(49 <= e.which && e.which <= 57){
+      speed = (speed/Math.abs(speed))*(e.which - 48);
+    }
+
     //plus
     if(e.which == 43){
       var porm = speed/Math.abs(speed)
