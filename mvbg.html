@@ -134,7 +134,8 @@ $(document).on("ready",function(){
     }
   },scrollSpeed);
 
-
+  var y = null;
+  var x = null;
   var bg = document.createElement("img");
   $("#bg").on("change",function(e){
     if(e.target.files.length){
@@ -143,9 +144,10 @@ $(document).on("ready",function(){
       reader.onload = (function(theFile) {
         return function(e) {
           bg.src = e.target.result;
+          y = 1080;
+          x = Math.floor(bg.width / (bg.height / 1080));
           $("body").css("background-image",'url("'+e.target.result+'")');
-          $("body").css("background-size",img.width+'px 1080px');
-
+          $("body").css("background-size", 'auto 1080px');
         };
       })(f);
       reader.readAsDataURL(f);
@@ -166,7 +168,7 @@ $(document).on("ready",function(){
           if(f.type.match('video.*')){
             $("#list").append('<div class="item"><video autoplay loop src="'+e.target.result+'"></div>')
           }
-          $('#list.vertical.spread > .item').css("width",$(window).width() - bg.width);
+          $('#list.vertical.spread > .item').css("width", 1920 - x);
         };
       })(f);
       reader.readAsDataURL(f);
