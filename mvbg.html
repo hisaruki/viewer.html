@@ -1,291 +1,304 @@
+<!DOCTYPE html>
+<html>
+
 <head>
-<script src="./jquery.min.js"></script>
-<script>
-$(document).on("ready",function(){
-  var rebuild = function(){
-    var classes = $("#list").attr("class");
-    $("#list").removeAttr("class");
-    setTimeout(function(){
-      $("#list").attr("class",classes);
-      detectStart();
-      window.scrollTo(XStart,YStart);
-    },50);
-  }
-  var scroll = function(){
-    window.scrollTo(window.pageXOffset-speed,window.pageYOffset);
-    if(XOffset === window.pageXOffset){
-      window.scrollTo(XStart,window.pageYOffset);
-    }
-    XOffset = window.pageXOffset;
-    window.scrollTo(window.pageXOffset,window.pageYOffset+speed);
-    if(YOffset === window.pageYOffset){
-      window.scrollTo(window.pageXOffset,YStart);
-    }
-    YOffset = window.pageYOffset;
-  }
-  var detectStart = function(){
-    if(speed > 0){
-      XStart = $(document).outerWidth() - $(window).width();
-      YStart = 0;
-    }
-    if(speed < 0){
-      XStart = 0;
-      YStart = $(document).outerHeight() - window.screen.availHeight;
-    }
-  }
-
-  var move = function(command){
-    var offsets = [];
-    if($(".horizonal").length){
-      var now = window.pageXOffset
-      var target = "left";
-    }
-    if($(".vertical").length){
-      var now = window.pageYOffset
-      var target = "top";
-    }
-
-    $(".item").each(function(){
-      offsets.push($(this).offset()[target])
-    })
-    if($(".vertical.spread").length){
-      var orgOffset = window.pageYOffset;
-      var spreads = [];
-      for(i=0;i<offsets.length;i+=2){
-        spreads.push(Math.min(offsets[i],offsets[i+1])||offsets[i]);
-        spreads.push(Math.min(offsets[i],offsets[i+1])||offsets[i]);
-      } 
-      offsets = spreads;
-    }
-
-    var diff = offsets.map(function(n) { return Math.abs(now - n) });
-    var index = diff.lastIndexOf(Math.min.apply([], diff));
-
-
-
-    var moveTo = command;
-    if(command === true){
-      moveTo = index+1;
-    }
-    if(command === false){
-      moveTo = index-1;
-      if(offsets[moveTo] == offsets[moveTo+1]){
-        moveTo--;
+  <script src="./jquery.min.js"></script>
+  <script>
+    $(document).on("ready", function () {
+      var rebuild = function () {
+        var classes = $("#list").attr("class");
+        $("#list").removeAttr("class");
+        setTimeout(function () {
+          $("#list").attr("class", classes);
+          detectStart();
+          window.scrollTo(XStart, YStart);
+        }, 50);
       }
-    }
-
-    if(moveTo < 0){
-      moveTo = offsets.length - 1;
-    }
-
-    if(target == "left" && offsets[moveTo] > $(document).width() - $(window).width()){
-      moveTo = offsets.length - 1;
-    }
-
-    if(offsets[moveTo] === undefined){
-      moveTo = 0;
-    }
-    moveTo = offsets[moveTo];
-
-    if(typeof command === 'object'){
-      if(target == "top"){
-        moveTo = window.pageYOffset + command[0];
+      var scroll = function () {
+        window.scrollTo(window.pageXOffset - speed, window.pageYOffset);
+        if (XOffset === window.pageXOffset) {
+          window.scrollTo(XStart, window.pageYOffset);
+        }
+        XOffset = window.pageXOffset;
+        window.scrollTo(window.pageXOffset, window.pageYOffset + speed);
+        if (YOffset === window.pageYOffset) {
+          window.scrollTo(window.pageXOffset, YStart);
+        }
+        YOffset = window.pageYOffset;
       }
-      if(target == "left"){
-        moveTo = window.pageXOffset + command[0];
+      var detectStart = function () {
+        if (speed > 0) {
+          XStart = $(document).outerWidth() - $(window).width();
+          YStart = 0;
+        }
+        if (speed < 0) {
+          XStart = 0;
+          YStart = $(document).outerHeight() - window.screen.availHeight;
+        }
       }
-    }
 
-    var autoscrollLocal = autoscroll;
-    if(target == "top"){
-      autoscroll = -1;
-      $("html,body").animate({scrollTop:moveTo},function(){
-        autoscroll = autoscrollLocal;
-        if(window.pageYOffset == orgOffset){
+      var move = function (command) {
+        var offsets = [];
+        if ($(".horizonal").length) {
+          var now = window.pageXOffset
+          var target = "left";
+        }
+        if ($(".vertical").length) {
+          var now = window.pageYOffset
+          var target = "top";
+        }
+
+        $(".item").each(function () {
+          offsets.push($(this).offset()[target])
+        })
+        if ($(".vertical.spread").length) {
+          var orgOffset = window.pageYOffset;
+          var spreads = [];
+          for (i = 0; i < offsets.length; i += 2) {
+            spreads.push(Math.min(offsets[i], offsets[i + 1]) || offsets[i]);
+            spreads.push(Math.min(offsets[i], offsets[i + 1]) || offsets[i]);
+          }
+          offsets = spreads;
+        }
+
+        var diff = offsets.map(function (n) { return Math.abs(now - n) });
+        var index = diff.lastIndexOf(Math.min.apply([], diff));
+
+
+
+        var moveTo = command;
+        if (command === true) {
+          moveTo = index + 1;
+        }
+        if (command === false) {
+          moveTo = index - 1;
+          if (offsets[moveTo] == offsets[moveTo + 1]) {
+            moveTo--;
+          }
+        }
+
+        if (moveTo < 0) {
+          moveTo = offsets.length - 1;
+        }
+
+        if (target == "left" && offsets[moveTo] > $(document).width() - $(window).width()) {
+          moveTo = offsets.length - 1;
+        }
+
+        if (offsets[moveTo] === undefined) {
+          moveTo = 0;
+        }
+        moveTo = offsets[moveTo];
+
+        if (typeof command === 'object') {
+          if (target == "top") {
+            moveTo = window.pageYOffset + command[0];
+          }
+          if (target == "left") {
+            moveTo = window.pageXOffset + command[0];
+          }
+        }
+
+        var autoscrollLocal = autoscroll;
+        if (target == "top") {
           autoscroll = -1;
-          $("html,body").animate({scrollTop:0},function(){
+          $("html,body").animate({ scrollTop: moveTo }, function () {
+            autoscroll = autoscrollLocal;
+            if (window.pageYOffset == orgOffset) {
+              autoscroll = -1;
+              $("html,body").animate({ scrollTop: 0 }, function () {
+                autoscroll = autoscrollLocal;
+              });
+            }
+          });
+        }
+        if (target == "left") {
+          autoscroll = -1;
+          $("html,body").animate({ scrollLeft: moveTo }, function () {
             autoscroll = autoscrollLocal;
           });
         }
+      }
+
+      var autoscroll = -1;
+      var speed = 5;
+      var XOffset = window.pageXOffset;
+      var YOffset = window.pageYOffset;
+      var XStart = $(document).outerWidth() - $(window).width();
+      var YStart = 0;
+      var scrollSpeed = 16;
+      setInterval(function () {
+        if (autoscroll > 0) {
+          scroll();
+        }
+      }, scrollSpeed);
+
+      var y = null;
+      var x = null;
+      var bg = document.createElement("img");
+      $("#bg").on("change", function (e) {
+        if (e.target.files.length) {
+          var f = e.target.files[0];
+          var reader = new FileReader();
+          reader.onload = (function (theFile) {
+            return function (e) {
+              bg.src = e.target.result;
+              bg.onload = (function () {
+                y = $(window).height();
+                x = Math.floor(bg.width / (bg.height / y));
+                $("body").css("background-image", 'url("' + e.target.result + '")');
+                $("body").css("background-size", 'auto ' + y + "px");
+              })
+            };
+          })(f);
+          reader.readAsDataURL(f);
+        }
       });
-    }
-    if(target == "left"){
-      autoscroll = -1;
-      $("html,body").animate({scrollLeft:moveTo},function(){
-        autoscroll = autoscrollLocal;
+
+      $(window).on("resize", function (e) {
+        y = $(window).height();
+        x = Math.floor(bg.width / (bg.height / y));
+        console.log(x, y, $(window).width(), $(window).height());
+        $("body").css("background-size", 'auto ' + y + "px");
+        $('#list.vertical.spread > .item').css("width", $(window).width() - x);
+      })
+
+      $("#mv").on("change", function (e) {
+        $("#list").empty();
+        for (i = 0; i < e.target.files.length; i++) {
+          var f = e.target.files[i];
+          var reader = new FileReader();
+          reader.onload = (function (theFile) {
+            return function (e) {
+              if (f.type.match('image.*')) {
+                $("#list").append('<div class="item"><img src="' + e.target.result + '"></div>')
+              }
+              if (f.type.match('video.*')) {
+                $("#list").append('<div class="item"><video autoplay loop src="' + e.target.result + '"></div>')
+              }
+              $('#list.vertical.spread > .item').css("width", $(window).width() - x);
+            };
+          })(f);
+          reader.readAsDataURL(f);
+        }
       });
+
+
+      $(document).on("keypress", function (e) {
+        //space
+        if (e.which == 32) {
+          autoscroll *= -1;
+        }
+        //r
+        if (e.which == 114) {
+          speed *= -1;
+        }
+
+        //num
+        if (49 <= e.which && e.which <= 57) {
+          speed = (speed / Math.abs(speed)) * (e.which - 48);
+        }
+
+        //plus
+        if (e.which == 43) {
+          var porm = speed / Math.abs(speed)
+          speed = Math.abs(speed + (1 * porm)) * porm || 1 * porm;
+        }
+        //substruct
+        if (e.which == 45) {
+          var porm = speed / Math.abs(speed)
+          speed = Math.abs(speed - (1 * porm)) * porm || 1 * porm;
+        }
+        //j
+        if (e.which == 106) {
+          move(true)
+        }
+        //k
+        if (e.which == 107) {
+          move(false)
+        }
+
+        //h
+        if (e.which == 104) {
+          move([-100 * speed]);
+        }
+        //l
+        if (e.which == 108) {
+          move([100 * speed]);
+        }
+
+        detectStart();
+      });
+
+      $(window).on("resize", function () {
+        rebuild();
+      });
+    });
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      overflow: hidden;
+      background: #cccccc;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      background-position: right top;
+    }
+
+    #menu {
+      background: rgba(255, 255, 255, 0.5);
+      text-align: right;
+      width: 100%;
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      opacity: 0;
+    }
+
+    #menu:hover {
+      opacity: 1;
     }
 
 
-
-
-  }
-
-  var autoscroll = -1;
-  var speed = 5;
-  var XOffset = window.pageXOffset;
-  var YOffset = window.pageYOffset;
-  var XStart = $(document).outerWidth() - $(window).width();
-  var YStart = 0;
-  var scrollSpeed = 16;
-  setInterval(function(){
-    if(autoscroll > 0){
-      scroll();
-    }
-  },scrollSpeed);
-
-  var y = null;
-  var x = null;
-  var bg = document.createElement("img");
-  $("#bg").on("change",function(e){
-    if(e.target.files.length){
-      var f = e.target.files[0];
-      var reader = new FileReader();
-      reader.onload = (function(theFile) {
-        return function(e) {
-          bg.src = e.target.result;
-          bg.onload = (function(){
-            y = 1080;
-            x = Math.floor(bg.width / (bg.height / 1080));
-            $("body").css("background-image",'url("'+e.target.result+'")');
-            $("body").css("background-size", 'auto 1080px');
-          })
-        };
-      })(f);
-      reader.readAsDataURL(f);
-    }
-  });
-
-  $("#mv").on("change",function(e){
-    $("#list").empty();
-    for(i=0;i<e.target.files.length;i++){
-      var f = e.target.files[i];
-      var reader = new FileReader();
-      reader.onload = (function(theFile) {
-        return function(e) {
-          if(f.type.match('image.*')){
-            $("#list").append('<div class="item"><img src="'+e.target.result+'"></div>')
-          }
-          if(f.type.match('video.*')){
-            $("#list").append('<div class="item"><video autoplay loop src="'+e.target.result+'"></div>')
-          }
-          $('#list.vertical.spread > .item').css("width", 1920 - x);
-        };
-      })(f);
-      reader.readAsDataURL(f);
-    }
-  });
-
-
-  $(document).on("keypress",function(e){
-    //space
-    if(e.which == 32){
-      autoscroll *= -1;
-    }
-    //r
-    if(e.which == 114){
-      speed *= -1;
+    #list.vertical {
+      width: 100%;
+      display: inline-flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
     }
 
-    //num
-    if(49 <= e.which && e.which <= 57){
-      speed = (speed/Math.abs(speed))*(e.which - 48);
+    #list>.item {
+      width: 100%;
     }
 
-    //plus
-    if(e.which == 43){
-      var porm = speed/Math.abs(speed)
-      speed = Math.abs(speed+(1*porm))*porm || 1*porm;
-    }
-    //substruct
-    if(e.which == 45){
-      var porm = speed/Math.abs(speed)
-      speed = Math.abs(speed-(1*porm))*porm || 1*porm;
-    }
-    //j
-    if(e.which == 106){
-      move(true)
-    }
-    //k
-    if(e.which == 107){
-      move(false)
+    #list.vertical.spread>.item {
+      width: 50%;
     }
 
-    //h
-    if(e.which == 104){
-      move([-100*speed]);
-    }
-    //l
-    if(e.which == 108){
-      move([100*speed]);
+    .horizonal img,
+    .horizonal video {
+      height: 100%;
     }
 
-    detectStart();
-  });
-
-  $(window).on("resize",function(){
-    rebuild();
-  });
-});
-</script>
-<style>
-* {
-  margin:0;
-  padding:0;
-}
-body {
-  overflow:hidden;
-  background:#cccccc;
-  background-attachment: fixed;
-  background-repeat:no-repeat;
-  background-position:right top;
-}
-#menu {
-  background:rgba(255,255,255,0.5);
-  text-align:right;
-  width:100%;
-  position:fixed;
-  bottom:0;
-  right:0;
-  opacity:0;
-}
-#menu:hover {
-  opacity:1;
-}
-
-
-#list.vertical {
-  width:100%;
-  display:inline-flex;
-  flex-direction:row;
-  flex-wrap:wrap;
-  align-items:center;
-}
-
-#list > .item {
-  width:100%;
-}
-
-#list.vertical.spread > .item {
-  width:50%;
-}
-
-.horizonal img,.horizonal video {
-  height:100%;
-}
-
-.vertical img,.vertical video {
-  width:100%;
-}
-
-
-</style>
+    .vertical img,
+    .vertical video {
+      width: 100%;
+    }
+  </style>
 </head>
+
 <body>
-<section id="menu">
-  <input id="mv" type="file" multiple="multiple">
-  <input id="bg" type="file">
-</section>
-<section id="list" class="vertical spread">
-</section>
+  <section id="menu">
+    <input id="mv" type="file" multiple="multiple">
+    <input id="bg" type="file">
+  </section>
+  <section id="list" class="vertical spread">
+  </section>
 </body>
+
+</html>
