@@ -144,10 +144,12 @@ $(document).on("ready",function(){
       reader.onload = (function(theFile) {
         return function(e) {
           bg.src = e.target.result;
-          y = 1080;
-          x = Math.floor(bg.width / (bg.height / 1080));
-          $("body").css("background-image",'url("'+e.target.result+'")');
-          $("body").css("background-size", 'auto 1080px');
+          bg.onload = (function(){
+            y = 1080;
+            x = Math.floor(bg.width / (bg.height / 1080));
+            $("body").css("background-image",'url("'+e.target.result+'")');
+            $("body").css("background-size", 'auto 1080px');
+          })
         };
       })(f);
       reader.readAsDataURL(f);
@@ -156,12 +158,11 @@ $(document).on("ready",function(){
 
   $("#mv").on("change",function(e){
     $("#list").empty();
-    if(e.target.files.length){
-      var f = e.target.files[0];
+    for(i=0;i<e.target.files.length;i++){
+      var f = e.target.files[i];
       var reader = new FileReader();
       reader.onload = (function(theFile) {
         return function(e) {
-          console.log(f.type);
           if(f.type.match('image.*')){
             $("#list").append('<div class="item"><img src="'+e.target.result+'"></div>')
           }
@@ -282,7 +283,7 @@ body {
 </head>
 <body>
 <section id="menu">
-  <input id="mv" type="file">
+  <input id="mv" type="file" multiple="multiple">
   <input id="bg" type="file">
 </section>
 <section id="list" class="vertical spread">
