@@ -147,6 +147,8 @@ $(document).on("ready",function(){
       }
 
       files.sort(compare);
+      files = files.concat(files);
+      files = files.concat(files);
       var loading = false;
       var num = 0;
       var me = setInterval(function(){
