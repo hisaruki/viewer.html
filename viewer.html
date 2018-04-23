@@ -147,8 +147,12 @@ $(document).on("ready",function(){
       }
 
       files.sort(compare);
-      files = files.concat(files);
-      files = files.concat(files);
+
+      if( $("#concat").prop('checked') ){
+        files = files.concat(files);
+        files = files.concat(files);
+      }
+
       var loading = false;
       var num = 0;
       var me = setInterval(function(){
@@ -303,6 +307,7 @@ body {
 </head>
 <body>
 <section id="menu">
+  <input id="concat" type="checkbox" checked="checked">
   <input id="dir" type="file" directory webkitdirectory>
 </section>
 <section id="list" class="vertical spread">
